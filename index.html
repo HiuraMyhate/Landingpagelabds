@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science Lab — UNPRI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+  <canvas id="robot-canvas"></canvas>
+
+  <section class="hero">
+    <div class="hero-content">
+      <p class="brand">UNPRI · Data Science Lab</p>
+      <h1>Welcome to the Data Science Lab</h1>
+      <p>We're a research group at Universitas Prima Indonesia building data-driven projects — from experiments to working systems, shaped by curiosity and careful engineering.</p>
+    </div>
+  </section>
+
+  <button class="scroll-btn" id="scrollBtn">
+    Scroll to explore
+    <span class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </span>
+  </button>
+
+  <section class="about" id="about">
+    <div class="about-inner">
+      <h2>What we work on</h2>
+      <div class="about-grid">
+        <div class="about-item">
+          <h3>Research</h3>
+          <p>Exploring machine learning, statistics, and data engineering through applied, hands-on projects.</p>
+        </div>
+        <div class="about-item">
+          <h3>Projects</h3>
+          <p>Turning ideas into working prototypes — from data pipelines to interactive tools and dashboards.</p>
+        </div>
+        <div class="about-item">
+          <h3>Community</h3>
+          <p>A space for students at UNPRI to learn together, share work, and grow as data practitioners.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
