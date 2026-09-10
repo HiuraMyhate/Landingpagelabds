@@ -1,8 +1,9 @@
 :root {
-  --navy: #211f2b;
-  --purple: #6a3fd6;
-  --purple-dark: #4a1fb0;
-  --purple-pale: #efe9fb;
+  --ink: #17132c;        /* dark eggplant-navy, replaces flat black */
+  --purple: #6c3ce6;
+  --purple-deep: #4a1fb0;
+  --lime: #a6ff4d;        /* energy/XP accent — used sparingly */
+  --lavender: #f3eefd;    /* pale card/tint surface */
   --white: #ffffff;
   --grey: #6f6c7c;
 }
@@ -14,8 +15,12 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  color: var(--navy);
+  color: var(--ink);
   background: var(--white);
+  /* subtle dot grid — sits behind the transparent parts of the robot canvas,
+     doesn't touch canvas or hero rules at all */
+  background-image: radial-gradient(var(--lavender) 1.6px, transparent 1.6px);
+  background-size: 28px 28px;
 }
 
 h1, h2, .brand {
@@ -25,7 +30,7 @@ h1, h2, .brand {
 canvas { display: block; }
 
 #robot-canvas {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -45,25 +50,103 @@ canvas { display: block; }
 }
 
 .hero-content {
+  position: relative;
   pointer-events: auto;
   max-width: 560px;
   padding: 0 6vw;
 }
 
+.hero-content::before,
+.hero-content::after {
+  pointer-events: none;
+}
+
+.hero-content::before {
+  content: '';
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  right: -30px;
+  top: 30%;
+  border: 1.5px solid rgba(108, 60, 230, 0.18);
+  transform: rotate(45deg);
+}
+
+.hero-content::after {
+  content: '+';
+  position: absolute;
+  top: -18px;
+  right: 10px;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--lime);
+  opacity: 0.75;
+}
+
+/* decorative shapes — pure CSS, sit in the empty left column, never over the robot */
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.hero::before {
+  width: 46px;
+  height: 46px;
+  top: 10vh;
+  left: 7vw;
+  border: 2px dashed rgba(108, 60, 230, 0.35);
+  border-radius: 50%;
+}
+
+.hero::after {
+  width: 14px;
+  height: 14px;
+  bottom: 16vh;
+  left: 9vw;
+  background: var(--lime);
+  border-radius: 4px;
+  transform: rotate(18deg);
+}
+
+/* .brand becomes a status-chip, like a "system online" badge */
 .brand {
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--purple-dark);
+  letter-spacing: 0.03em;
+  color: var(--purple-deep);
+  background: var(--lavender);
+  border: 1.5px solid rgba(108, 60, 230, 0.25);
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
   margin: 0 0 28px 0;
+}
+
+.brand::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 3px rgba(166, 255, 77, 0.25);
+  flex-shrink: 0;
 }
 
 .hero h1 {
   font-size: clamp(2.2rem, 4.2vw, 3.4rem);
   line-height: 1.12;
   font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0 0 22px 0;
-  color: var(--navy);
+  color: var(--ink);
+}
+
+.hero h1 .accent {
+  color: var(--purple);
 }
 
 .hero p {
@@ -85,26 +168,34 @@ canvas { display: block; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: none;
   border: none;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
-  color: var(--purple-dark);
+  font-weight: 500;
+  color: var(--purple-deep);
   letter-spacing: 0.02em;
   transition: opacity 0.3s ease;
 }
 
 .scroll-btn .arrow {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  border: 1.5px solid var(--purple-dark);
+  border: none;
+  background: var(--purple);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--white);
   animation: bob 1.8s ease-in-out infinite;
+  transition: background 0.2s ease;
+}
+
+.scroll-btn:hover .arrow {
+  background: var(--purple-deep);
 }
 
 .scroll-btn svg {
@@ -126,14 +217,65 @@ canvas { display: block; }
 .about {
   position: relative;
   z-index: 1;
-  background: var(--navy);
+  background: var(--ink);
+  background-image: radial-gradient(rgba(166, 255, 77, 0.06) 1.6px, transparent 1.6px);
+  background-size: 24px 24px;
   color: var(--white);
   padding: 120px 6vw;
+  overflow: hidden;
+}
+
+.about::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.about::after {
+  content: '';
+  position: absolute;
+  top: 70px;
+  left: 6vw;
+  width: 60px;
+  height: 0;
+  border-top: 2px dashed rgba(166, 255, 77, 0.4);
+  pointer-events: none;
 }
 
 .about-inner {
+  position: relative;
   max-width: 900px;
   margin: 0 auto;
+}
+
+/* corner-bracket frame, like a HUD stat panel */
+.about-inner::before,
+.about-inner::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.about-inner::before {
+  top: -14px;
+  left: -14px;
+  border-top: 2px solid var(--lime);
+  border-left: 2px solid var(--lime);
+}
+
+.about-inner::after {
+  bottom: -14px;
+  right: -14px;
+  border-bottom: 2px solid var(--purple);
+  border-right: 2px solid var(--purple);
 }
 
 .about h2 {
@@ -144,20 +286,42 @@ canvas { display: block; }
   line-height: 1.3;
 }
 
+.about h2 .accent-light {
+  color: var(--lime);
+}
+
 .about-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border-top: 1px solid rgba(255,255,255,0.15);
+  gap: 18px;
 }
 
 .about-item {
-  padding: 28px 24px 28px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
-  border-right: 1px solid rgba(255,255,255,0.15);
+  padding: 26px 22px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
 
-.about-item:last-child { border-right: none; }
+.about-item:hover {
+  border-color: var(--lime);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+.about-item::before {
+  content: '';
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--lime);
+  margin-bottom: 16px;
+}
+
+.about-item:nth-child(2)::before { background: var(--purple); }
+.about-item:nth-child(3)::before { background: var(--white); }
 
 .about-item h3 {
   font-family: 'Sora', sans-serif;
@@ -170,12 +334,41 @@ canvas { display: block; }
 .about-item p {
   font-size: 0.92rem;
   line-height: 1.6;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
   margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-item { transition: none; }
+  .about-item:hover { transform: none; }
 }
 
 @media (max-width: 760px) {
   .about-grid { grid-template-columns: 1fr; }
-  .about-item { border-right: none; }
   .hero-content { max-width: 100%; }
+}
+
+/* --- Efek Kursor Cahaya Bintang Ungu --- */
+.star-trail {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #9b51e0; /* Warna ungu utama */
+    box-shadow: 0 0 10px #9b51e0, 0 0 20px #d4a5ff; /* Efek cahaya tipis */
+    border-radius: 50%;
+    pointer-events: none; /* Agar elemen ini tidak menghalangi saat kamu klik tombol/link */
+    z-index: 9999; /* Pastikan selalu berada di atas elemen lain */
+    animation: fadeOutStar 0.8s linear forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes fadeOutStar {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.1);
+    }
 }
