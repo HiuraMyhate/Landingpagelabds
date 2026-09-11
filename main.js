@@ -92,14 +92,24 @@ loader.load(
     robotModel.position.z -= center.z;
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    camera.position.z = maxDim * 2.2;
+    // pulled back a bit further (2.2 -> 2.6) so the robot renders smaller
+    // and has room to breathe between the text and the stats panel
+    camera.position.z = maxDim * 2.0;
     camera.near = maxDim / 100;
     camera.far = maxDim * 100;
     camera.updateProjectionMatrix();
 
-    robotModel.position.x += maxDim * 0.8;
+    // pulled left, closer to true-center, so it clears the stats panel on
+    // the right — tweak this multiplier if it still overlaps on your screen
+    robotModel.position.x += maxDim * -0.065;
 
-    baseRotationY = -2.0;
+    // pushed down a little so it clears the headline above — the hero
+    // block now sits near the top of the viewport (not centered), so this
+    // only needs a small nudge. Increase to push down more, decrease
+    // (toward 0) if it's still too low
+    robotModel.position.y -= maxDim * 0.12;
+
+    baseRotationY = -1.65;
     robotModel.rotation.y = baseRotationY;
 
     robotModel.traverse((child) => {
@@ -134,7 +144,7 @@ function animate() {
   const now = performance.now();
 
   if (robotModel) {
-    const targetRotY = baseRotationY + mouse.x * 0.3;
+    const targetRotY = baseRotationY + mouse.x * 0.6;
     const targetRotX = mouse.y * 0.2;
     robotModel.rotation.y += (targetRotY - robotModel.rotation.y) * 0.08;
     robotModel.rotation.x += (-targetRotX - robotModel.rotation.x) * 0.08;
@@ -164,21 +174,22 @@ window.addEventListener('scroll', () => {
   btn.style.pointerEvents = window.scrollY > 100 ? 'none' : 'auto';
 });
 
-// --- Script untuk Efek Kursor Bintang Ungu ---
-document.addEventListener('mousemove', function(e) {
-    // 1. Membuat elemen div baru untuk bintang
-    const star = document.createElement('div');
-    star.className = 'star-trail';
-    
-    // 2. Menentukan posisi bintang sesuai dengan posisi kursor saat itu
-    star.style.left = e.pageX + 'px';
-    star.style.top = e.pageY + 'px';
-    
-    // 3. Menambahkan bintang ke dalam body halaman
-    document.body.appendChild(star);
-    
-    // 4. Menghapus bintang setelah 800ms (sesuai durasi animasi di CSS) agar web tidak berat
-    setTimeout(() => {
-        star.remove();
-    }, 800);
+// --- Efek Kursor Bintang Ungu (throttled biar nggak berat / berantakan) ---
+let lastStarTime = 0;
+const STAR_INTERVAL_MS = 45; // jarak minimum antar bintang
+
+document.addEventListener('mousemove', function (e) {
+  const now = performance.now();
+  if (now - lastStarTime < STAR_INTERVAL_MS) return;
+  lastStarTime = now;
+
+  const star = document.createElement('div');
+  star.className = 'star-trail';
+  star.style.left = e.pageX + 'px';
+  star.style.top = e.pageY + 'px';
+  document.body.appendChild(star);
+
+  setTimeout(() => {
+    star.remove();
+  }, 700);
 });
