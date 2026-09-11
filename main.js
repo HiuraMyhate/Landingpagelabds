@@ -36,7 +36,7 @@ let blinkProgress = 0;
 let nextBlinkTime = performance.now() + randomBlinkDelay();
 
 function randomBlinkDelay() {
-  return 2000 + Math.random() * 3000; //
+  return 2000 + Math.random() * 3000;
 }
 
 function updateBlink(now) {
@@ -70,7 +70,7 @@ function updateBlink(now) {
 
     blinkTargets.forEach(({ mesh, originalY }) => {
       mesh.scale.y = scaleY;
-      mesh.position.y = originalY + (1 - scaleY) * 0.05; //
+      mesh.position.y = originalY + (1 - scaleY) * 0.05;
     });
   }
 }
@@ -92,21 +92,12 @@ loader.load(
     robotModel.position.z -= center.z;
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    // pulled back a bit further (2.2 -> 2.6) so the robot renders smaller
-    // and has room to breathe between the text and the stats panel
     camera.position.z = maxDim * 2.0;
     camera.near = maxDim / 100;
     camera.far = maxDim * 100;
     camera.updateProjectionMatrix();
 
-    // pulled left, closer to true-center, so it clears the stats panel on
-    // the right — tweak this multiplier if it still overlaps on your screen
     robotModel.position.x += maxDim * -0.065;
-
-    // pushed down a little so it clears the headline above — the hero
-    // block now sits near the top of the viewport (not centered), so this
-    // only needs a small nudge. Increase to push down more, decrease
-    // (toward 0) if it's still too low
     robotModel.position.y -= maxDim * 0.12;
 
     baseRotationY = -1.65;
@@ -116,7 +107,7 @@ loader.load(
       if (eyeNames.includes(child.name) || pupilNames.includes(child.name)) {
         blinkTargets.push({
           mesh: child,
-          originalY: child.position.y, // simpan posisi Y asli mesh
+          originalY: child.position.y,
         });
       }
     });
@@ -174,9 +165,9 @@ window.addEventListener('scroll', () => {
   btn.style.pointerEvents = window.scrollY > 100 ? 'none' : 'auto';
 });
 
-// --- Efek Kursor Bintang Ungu (throttled biar nggak berat / berantakan) ---
+// --- Efek Kursor Bintang Ungu ---
 let lastStarTime = 0;
-const STAR_INTERVAL_MS = 45; // jarak minimum antar bintang
+const STAR_INTERVAL_MS = 45;
 
 document.addEventListener('mousemove', function (e) {
   const now = performance.now();
@@ -194,9 +185,17 @@ document.addEventListener('mousemove', function (e) {
   }, 700);
 });
 
-// --- Tab switching untuk section "Who We Are" ---
+// --- Tab switching & Dynamic Title untuk section "Who We Are" ---
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.who-panel-content');
+const whoTitle = document.querySelector('.who-title');
+
+// Mapping teks judul sesuai tab yang aktif
+const titleMap = {
+  'about-tab': 'Who we are',
+  'visi-tab': 'Where we go',
+  'misi-tab': 'How we get there'
+};
 
 tabButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -204,6 +203,13 @@ tabButtons.forEach((btn) => {
     tabPanels.forEach((p) => p.classList.remove('active'));
 
     btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
+    
+    const targetTab = btn.dataset.tab;
+    document.getElementById(targetTab).classList.add('active');
+
+    // Ubah teks judul secara dinamis
+    if (whoTitle && titleMap[targetTab]) {
+      whoTitle.textContent = titleMap[targetTab];
+    }
   });
 });
